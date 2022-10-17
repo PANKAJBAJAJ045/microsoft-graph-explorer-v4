@@ -1,4 +1,4 @@
-import { applyMiddleware, createStore } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
 import { createLogger } from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
 import localStorageMiddleware from '../app/middleware/localStorageMiddleware';
@@ -38,8 +38,8 @@ const initialState: any = {
   termsOfUse: true
 };
 
-export const store = createStore(
-  reducers,
-  initialState,
-  applyMiddleware(...middlewares)
-);
+export const store = configureStore({
+  reducer: reducers,
+  middleware: middlewares,
+  preloadedState: initialState
+});
