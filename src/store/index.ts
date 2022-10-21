@@ -1,9 +1,13 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { ActionCreator, configureStore } from '@reduxjs/toolkit';
+import { TypedUseSelectorHook, useSelector } from 'react-redux';
 import { createLogger } from 'redux-logger';
-import thunkMiddleware from 'redux-thunk';
+import thunkMiddleware, { ThunkAction } from 'redux-thunk';
+
 import localStorageMiddleware from '../app/middleware/localStorageMiddleware';
 import telemetryMiddleware from '../app/middleware/telemetryMiddleware';
 import reducers from '../app/services/reducers';
+import { AppAction } from '../types/action';
+import { ApplicationState } from '../types/root';
 
 const loggerMiddleware = createLogger({
   level: 'error',
@@ -43,3 +47,7 @@ export const store = configureStore({
   middleware: middlewares,
   preloadedState: initialState
 });
+
+export type AppDispatch = typeof store.dispatch;
+export type AppThunk = ActionCreator<ThunkAction<void, ApplicationState, null, AppAction>>;
+export const useAppSelector: TypedUseSelectorHook<ApplicationState> = useSelector;
