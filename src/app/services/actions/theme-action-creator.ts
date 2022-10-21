@@ -1,19 +1,16 @@
 import { Dispatch } from 'redux';
 
-import { saveTheme } from '../../../themes/theme-utils';
-import { IAction } from '../../../types/action';
+import { AppAction } from '../../../types/action';
 import { CHANGE_THEME_SUCCESS } from '../redux-constants';
 
-export function changeThemeSuccess(response: string): IAction {
+export const changeThemeSuccess = (response: string): AppAction => {
   return {
     type: CHANGE_THEME_SUCCESS,
     response
   };
 }
 
-export function changeTheme(theme: string): Function {
-  saveTheme(theme);
-
+export const changeTheme = (theme: string) => {
   return (dispatch: Dispatch) => {
     dispatch(changeThemeSuccess(theme));
   };

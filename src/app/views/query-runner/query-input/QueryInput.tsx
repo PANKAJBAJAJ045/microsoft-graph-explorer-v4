@@ -1,10 +1,9 @@
 import { Dropdown, IDropdownOption, IStackTokens, Stack } from '@fluentui/react';
-import React from 'react';
 import { injectIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
-import { httpMethods, IQuery, IQueryInputProps } from '../../../../types/query-runner';
+import { useDispatch } from 'react-redux';
 
-import { IRootState } from '../../../../types/root';
+import { AppDispatch, useAppSelector } from '../../../../store';
+import { httpMethods, IQuery, IQueryInputProps } from '../../../../types/query-runner';
 import { setSampleQuery } from '../../../services/actions/query-input-action-creators';
 import { GRAPH_API_VERSIONS } from '../../../services/graph-constants';
 import { getStyleFor } from '../../../utils/http-methods.utils';
@@ -15,7 +14,6 @@ import { queryRunnerStyles } from '../QueryRunner.styles';
 import { AutoComplete } from './auto-complete';
 import { ShareQuery } from './share-query';
 
-
 const QueryInput = (props: IQueryInputProps) => {
   const {
     handleOnRunQuery,
@@ -23,7 +21,7 @@ const QueryInput = (props: IQueryInputProps) => {
     handleOnVersionChange
   } = props;
 
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   const urlVersions: IDropdownOption[] = [];
   GRAPH_API_VERSIONS.forEach(version => {
@@ -34,7 +32,7 @@ const QueryInput = (props: IQueryInputProps) => {
   });
 
   const { sampleQuery, authToken,
-    isLoadingData: submitting, sidebarProperties } = useSelector((state: IRootState) => state);
+    isLoadingData: submitting, sidebarProperties } = useAppSelector((state) => state);
   const authenticated = !!authToken.token;
   const { mobileScreen } = sidebarProperties;
 

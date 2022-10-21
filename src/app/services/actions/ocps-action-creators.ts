@@ -1,5 +1,6 @@
 import { authenticationWrapper } from '../../../modules/authentication';
-import { IAction } from '../../../types/action';
+import { AppDispatch, AppThunk } from '../../../store';
+import { AppAction } from '../../../types/action';
 import { IRequestOptions } from '../../../types/request';
 import {
   GET_POLICY_ERROR,
@@ -13,30 +14,31 @@ interface IPolicyValues {
   feedback: number
 }
 
-export function getPoliciesSuccess(response: object): IAction {
+export const getPoliciesSuccess = (response: object): AppAction => {
   return {
     type: GET_POLICY_SUCCESS,
     response
   };
 }
 
-export function getPoliciesError(response: object): IAction {
+export const getPoliciesError = (response: object): AppAction => {
   return {
     type: GET_POLICY_ERROR,
     response
   };
 }
 
-export function getPoliciesPending(): any {
+export const getPoliciesPending = (): AppAction => {
   return {
-    type: GET_POLICY_PENDING
+    type: GET_POLICY_PENDING,
+    response: null
   };
 }
 
 
 // TODO: Test this function
-export function getPolicies(): Function {
-  return async (dispatch: Function) => {
+export const getPolicies: AppThunk = () => {
+  return async (dispatch: AppDispatch) => {
     try {
       const policyUrl = getPolicyUrl();
       const token = await authenticationWrapper.getOcpsToken();

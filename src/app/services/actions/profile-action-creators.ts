@@ -1,4 +1,6 @@
 import { AgeGroup } from '@ms-ofb/officebrowserfeedbacknpm/scripts/app/Configuration/IInitOptions';
+import { AppDispatch, AppThunk } from '../../../store';
+import { AppAction } from '../../../types/action';
 import { IUser } from '../../../types/profile';
 import { IQuery } from '../../../types/query-runner';
 import { translateMessage } from '../../utils/translate-messages';
@@ -26,14 +28,14 @@ interface IProfileResponse {
   response: any;
 }
 
-export function profileRequestSuccess(response: object): any {
+export const profileRequestSuccess = (response: object): AppAction => {
   return {
     type: PROFILE_REQUEST_SUCCESS,
     response
   };
 }
 
-export function profileRequestError(response: object): any {
+export const profileRequestError = (response: object): AppAction => {
   return {
     type: PROFILE_REQUEST_ERROR,
     response
@@ -52,8 +54,8 @@ const query: IQuery = {
   sampleUrl: ''
 };
 
-export function getProfileInfo(): Function {
-  return async (dispatch: Function) => {
+export const getProfileInfo: AppThunk = () => {
+  return async (dispatch: AppDispatch) => {
     try {
       const profile: IUser = await getProfileInformation();
       const { profileType, ageGroup } = await getBetaProfile();
@@ -61,9 +63,9 @@ export function getProfileInfo(): Function {
       profile.ageGroup = ageGroup;
       profile.profileImageUrl = await getProfileImage();
       profile.tenant= await getTenantInfo(profileType);
-      dispatch(profileRequestSuccess(profile));
+      return dispatch(profileRequestSuccess(profile));
     } catch (error) {
-      dispatch(profileRequestError({ error }));
+      return dispatch(profileRequestError({ error }));
     }
   };
 }

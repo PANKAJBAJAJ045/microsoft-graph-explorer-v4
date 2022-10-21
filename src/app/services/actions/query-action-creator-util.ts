@@ -9,7 +9,8 @@ import {
 } from '@microsoft/microsoft-graph-client/authProviders/authCodeMsalBrowser';
 
 import { authenticationWrapper } from '../../../modules/authentication';
-import { IAction } from '../../../types/action';
+import { AppDispatch } from '../../../store';
+import { AppAction } from '../../../types/action';
 import { ContentType } from '../../../types/enums';
 import { IQuery } from '../../../types/query-runner';
 import { IRequestOptions } from '../../../types/request';
@@ -22,18 +23,14 @@ import { DEFAULT_USER_SCOPES } from '../graph-constants';
 import { QUERY_GRAPH_SUCCESS } from '../redux-constants';
 import { queryRunningStatus } from './query-loading-action-creators';
 
-export function queryResponse(response: object): IAction {
+export function queryResponse(response: object): AppAction {
   return {
     type: QUERY_GRAPH_SUCCESS,
     response
   };
 }
 
-export async function anonymousRequest(
-  dispatch: Function,
-  query: IQuery,
-  getState: Function
-) {
+export const anonymousRequest = async (dispatch: AppDispatch, query: IQuery, getState: Function) => {
   const { proxyUrl, queryRunnerStatus } = getState();
   const { graphUrl, options } = createAnonymousRequest(query, proxyUrl, queryRunnerStatus);
   dispatch(queryRunningStatus(true));
@@ -113,8 +110,8 @@ function createAuthenticatedRequest(
     .responseType(ResponseType.RAW);
 }
 
-export function makeGraphRequest(scopes: string[]): Function {
-  return async (query: IQuery) => {
+export const makeGraphRequest = (scopes: string[]) => {
+  return async (query: IQuery): Promise<any> => {
     let response;
 
     const graphRequest = createAuthenticatedRequest(scopes, query);

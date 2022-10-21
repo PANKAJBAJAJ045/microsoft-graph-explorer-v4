@@ -1,4 +1,5 @@
-import { IAction } from '../../../types/action';
+import { AppDispatch } from '../../../store';
+import { AppAction } from '../../../types/action';
 import { Header, IQuery } from '../../../types/query-runner';
 import { IRequestOptions } from '../../../types/request';
 import { parseSampleUrl } from '../../utils/sample-url-generation';
@@ -9,35 +10,36 @@ import {
   SET_SNIPPET_TAB_SUCCESS
 } from '../redux-constants';
 
-export function getSnippetSuccess(response: string): IAction {
+export const getSnippetSuccess = (response: string): AppAction => {
   return {
     type: GET_SNIPPET_SUCCESS,
     response
   };
 }
 
-export function getSnippetError(response: object): IAction {
+export const getSnippetError = (response: object): AppAction => {
   return {
     type: GET_SNIPPET_ERROR,
     response
   };
 }
 
-export function getSnippetPending(): any {
+export const getSnippetPending = (): AppAction => {
   return {
-    type: GET_SNIPPET_PENDING
+    type: GET_SNIPPET_PENDING,
+    response: null
   };
 }
 
-export function setSnippetTabSuccess(response: string): any {
+export const setSnippetTabSuccess = (response: string): AppAction => {
   return {
     type: SET_SNIPPET_TAB_SUCCESS,
     response
   }
 }
 
-export function getSnippet(language: string): Function {
-  return async (dispatch: Function, getState: Function) => {
+export const getSnippet = (language: string) => {
+  return async (dispatch: AppDispatch, getState: Function) => {
     const { devxApi, sampleQuery } = getState();
 
     try {

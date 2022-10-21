@@ -1,37 +1,35 @@
 import { SignContext, suggestions } from '../../../modules/suggestions';
-import { IAction } from '../../../types/action';
+import { AppDispatch, AppThunk } from '../../../store';
+import { AppAction } from '../../../types/action';
 import {
   AUTOCOMPLETE_FETCH_ERROR,
   AUTOCOMPLETE_FETCH_PENDING,
   AUTOCOMPLETE_FETCH_SUCCESS
 } from '../redux-constants';
 
-export function fetchAutocompleteSuccess(response: object): IAction {
+export const fetchAutocompleteSuccess = (response: object): AppAction => {
   return {
     type: AUTOCOMPLETE_FETCH_SUCCESS,
     response
   };
 }
 
-export function fetchAutocompleteError(response: object): IAction {
+export const fetchAutocompleteError = (response: object): AppAction => {
   return {
     type: AUTOCOMPLETE_FETCH_ERROR,
     response
   };
 }
 
-export function fetchAutocompletePending(): any {
+export const fetchAutocompletePending = (): AppAction => {
   return {
-    type: AUTOCOMPLETE_FETCH_PENDING
+    type: AUTOCOMPLETE_FETCH_PENDING,
+    response: null
   };
 }
 
-export function fetchAutoCompleteOptions(
-  url: string,
-  version: string,
-  context: SignContext = 'paths'
-): Function {
-  return async (dispatch: Function, getState: Function) => {
+export const fetchAutoCompleteOptions: AppThunk = (url: string, version: string, context: SignContext = 'paths') => {
+  return async (dispatch: AppDispatch, getState: Function) => {
     const devxApiUrl = getState().devxApi.baseUrl;
     const resources = getState().resources.data;
     dispatch(fetchAutocompletePending());

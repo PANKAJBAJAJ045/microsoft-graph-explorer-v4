@@ -1,4 +1,5 @@
 import { MessageBarType } from '@fluentui/react';
+import { AppDispatch } from '../../../store';
 
 import { ContentType } from '../../../types/enums';
 import { IHistoryItem } from '../../../types/history';
@@ -20,29 +21,27 @@ import {
 import { setQueryResponseStatus } from './query-status-action-creator';
 import { addHistoryItem } from './request-history-action-creators';
 
-export function runQuery(query: IQuery): Function {
-  return (dispatch: Function, getState: Function) => {
+export const runQuery = (query: IQuery) => {
+  return async (dispatch: AppDispatch, getState: Function) => {
     const tokenPresent = !!getState()?.authToken?.token;
     const respHeaders: any = {};
     const createdAt = new Date().toISOString();
 
     if (tokenPresent) {
-      return authenticatedRequest(dispatch, query)
-        .then(async (response: Response) => {
-          await processResponse(response, respHeaders, dispatch, createdAt);
-        })
-        .catch(async (error: any) => {
-          return handleError(dispatch, error);
-        });
+      try {
+        const response = await authenticatedRequest(dispatch, query);
+        await processResponse(response, respHeaders, dispatch, createdAt);
+      } catch (error) {
+        return await handleError(dispatch, error);
+      }
     }
 
-    return anonymousRequest(dispatch, query, getState)
-      .then(async (response: Response) => {
-        await processResponse(response, respHeaders, dispatch, createdAt);
-      })
-      .catch(async (error: any) => {
-        return handleError(dispatch, error);
-      });
+    try {
+      const response_2 = await anonymousRequest(dispatch, query, getState);
+      await processResponse(response_2, respHeaders, dispatch, createdAt);
+    } catch (error_1) {
+      return handleError(dispatch, error_1);
+    }
   };
 
   async function processResponse(
@@ -106,7 +105,7 @@ export function runQuery(query: IQuery): Function {
     );
   }
 
-  function handleError(dispatch: Function, error: any) {
+  function handleError(dispatch: AppDispatch, error: any) {
     let body = error;
     const status: IStatus = {
       messageType: MessageBarType.error,

@@ -3,11 +3,10 @@ import {
   Spinner, Text, TooltipHost
 } from '@fluentui/react';
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '../../../../../../store';
 import { telemetry, eventTypes, componentNames } from '../../../../../../telemetry';
 
 import { ISampleQuery } from '../../../../../../types/query-runner';
-import { IRootState } from '../../../../../../types/root';
 import { sanitizeQueryUrl } from '../../../../../utils/query-url-sanitization';
 import { parseSampleUrl } from '../../../../../utils/sample-url-generation';
 import { translateMessage } from '../../../../../utils/translate-messages';
@@ -16,9 +15,7 @@ import { getMatchingSamples, IHint } from './suffix-util';
 import { styles } from './suffix.styles';
 
 const SuffixRenderer = () => {
-  const { autoComplete, sampleQuery, samples, queryRunnerStatus } = useSelector(
-    (state: IRootState) => state
-  );
+  const { autoComplete, sampleQuery, samples, queryRunnerStatus } = useAppSelector((state) => state);
   const fetchingSuggestions = autoComplete.pending;
   const autoCompleteError = autoComplete.error;
   const { requestUrl, queryVersion } =

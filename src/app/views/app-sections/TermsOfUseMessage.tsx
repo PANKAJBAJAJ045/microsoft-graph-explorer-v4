@@ -1,24 +1,22 @@
 import { Link, MessageBar, MessageBarType, styled } from '@fluentui/react';
-import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
 
 import { geLocale } from '../../../appLocale';
 import { componentNames, telemetry } from '../../../telemetry';
-import { IRootState } from '../../../types/root';
 import { clearTermsOfUse } from '../../services/actions/terms-of-use-action-creator';
 import { appStyles } from '../App.styles';
+import { useAppSelector } from '../../../store';
 
 const styledTermsOfUseMessage = () => {
 
   const { termsOfUse } =
-    useSelector((state: IRootState) => state);
+    useAppSelector((state) => state);
 
-  const dispatch = useDispatch();
   if (termsOfUse) {
     return <MessageBar messageBarType={MessageBarType.info}
       isMultiline={true}
-      onDismiss={() => dispatch(clearTermsOfUse())}
+      onDismiss={() => clearTermsOfUse()}
       dismissButtonAriaLabel='Close'
       style={{ position: 'relative' }}>
       <FormattedMessage id='use the Microsoft Graph API' />

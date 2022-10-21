@@ -7,12 +7,12 @@ import {
 import debouce from 'lodash.debounce';
 import React, { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
+import { AppDispatch, useAppSelector } from '../../../../store';
 import { componentNames, eventTypes, telemetry } from '../../../../telemetry';
 import { IQuery } from '../../../../types/query-runner';
 import { IResource, IResourceLink, ResourceLinkType, ResourceOptions } from '../../../../types/resources';
-import { IRootState } from '../../../../types/root';
 import { setSampleQuery } from '../../../services/actions/query-input-action-creators';
 import { addResourcePaths } from '../../../services/actions/resource-explorer-action-creators';
 import { GRAPH_URL } from '../../../services/graph-constants';
@@ -32,10 +32,8 @@ import ResourceLink from './ResourceLink';
 import { navStyles } from './resources.styles';
 
 const unstyledResourceExplorer = (props: any) => {
-  const dispatch = useDispatch();
-  const { resources } = useSelector(
-    (state: IRootState) => state
-  );
+  const dispatch: AppDispatch = useDispatch();
+  const { resources } = useAppSelector((state) => state);
   const classes = classNames(props);
   const { data, pending, paths: selectedLinks } = resources;
 
@@ -180,7 +178,7 @@ const unstyledResourceExplorer = (props: any) => {
   }
 
   return (
-    <section style = {{marginTop: '8px'}}>
+    <section style={{ marginTop: '8px' }}>
       {!isolated && <>
         <SearchBox
           placeholder={translateMessage('Search resources')}
@@ -228,7 +226,7 @@ const unstyledResourceExplorer = (props: any) => {
         <FormattedMessage id='Resources available' />
       </Label>
       {
-        items[0].links.length === 0 ? NoResultsFound('No resources found', {paddingBottom: '60px'}):
+        items[0].links.length === 0 ? NoResultsFound('No resources found', { paddingBottom: '60px' }) :
           (<Nav
             groups={items}
             styles={navStyles}

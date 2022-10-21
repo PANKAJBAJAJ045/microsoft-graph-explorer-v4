@@ -1,30 +1,17 @@
 import {
-  Announced,
-  DefaultButton,
-  DetailsList,
-  DetailsListLayoutMode,
-  getTheme,
-  GroupHeader,
-  IColumn,
-  IDetailsListCheckboxProps,
-  IOverlayProps,
-  Label,
-  Panel,
-  PanelType,
-  PrimaryButton,
-  SearchBox,
-  SelectionMode,
-  Selection,
+  Announced, DefaultButton, DetailsList, DetailsListLayoutMode, getTheme,
+  GroupHeader, IColumn, IDetailsListCheckboxProps, IOverlayProps, Label,
+  Panel, PanelType, PrimaryButton, SearchBox, SelectionMode, Selection,
   IGroup
 } from '@fluentui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
-import { componentNames, eventTypes, telemetry } from '../../../../../telemetry';
+import { useDispatch } from 'react-redux';
 
+import { AppDispatch, useAppSelector } from '../../../../../store';
+import { componentNames, eventTypes, telemetry } from '../../../../../telemetry';
 import { SortOrder } from '../../../../../types/enums';
 import { IPermission } from '../../../../../types/permissions';
-import { IRootState } from '../../../../../types/root';
 import { consentToScopes } from '../../../../services/actions/permissions-action-creator';
 import { togglePermissionsPanel } from '../../../../services/actions/permissions-panel-action-creator';
 import { dynamicSort } from '../../../../utils/dynamic-sort';
@@ -44,20 +31,20 @@ interface IPanelList {
 }
 
 const PanelList = ({ messages,
-  columns, classes, renderItemColumn, renderDetailsHeader, renderCustomCheckbox }: IPanelList) : JSX.Element => {
+  columns, classes, renderItemColumn, renderDetailsHeader, renderCustomCheckbox }: IPanelList): JSX.Element => {
 
   const sortPermissions = (permissionsToSort: IPermission[]): IPermission[] => {
     return permissionsToSort ? permissionsToSort.sort(dynamicSort('value', SortOrder.ASC)) : [];
   }
 
-  const { consentedScopes, scopes, authToken, permissionsPanelOpen } = useSelector((state: IRootState) => state);
+  const { consentedScopes, scopes, authToken, permissionsPanelOpen } = useAppSelector((state) => state);
   const { fullPermissions } = scopes.data;
-  const [permissions, setPermissions] = useState<any []>([]);
+  const [permissions, setPermissions] = useState<any[]>([]);
   const [groups, setGroups] = useState<IGroup[]>([]);
   const [searchStarted, setSearchStarted] = useState(false);
   const permissionsList: any[] = [];
   const tokenPresent = !!authToken.token;
-  const [selectedPermissions, setSelectedPermissions] = useState<string []>([]);
+  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
   const loading = scopes.pending.isFullPermissions;
 
   const theme = getTheme();
@@ -71,16 +58,16 @@ const PanelList = ({ messages,
 
   useEffect(() => {
     if (shouldGenerateGroups.current) {
-      if(permissionsList.length === 0){ return }
+      if (permissionsList.length === 0) { return }
       setGroups(generateGroupsFromList(permissionsList, 'groupName'));
-      if(groups && groups.length > 0) {
+      if (groups && groups.length > 0) {
         shouldGenerateGroups.current = false;
       }
     }
   }, [permissions, searchStarted])
 
 
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   setConsentedStatus(tokenPresent, permissions, consentedScopes);
 
@@ -133,7 +120,7 @@ const PanelList = ({ messages,
   };
 
   const handleConsent = () => {
-    dispatch(consentToScopes(selectedPermissions));
+    consentToScopes(selectedPermissions);
     setSelectedPermissions([]);
   };
 
@@ -142,9 +129,9 @@ const PanelList = ({ messages,
     return (
       <div>
         <PrimaryButton
-          disabled = {selectedPermissions.length === 0}
+          disabled={selectedPermissions.length === 0}
           onClick={() => handleConsent()}
-          style={(selectedPermissions.length > 0) ? activeConsentStyles: inactiveConsentStyles}
+          style={(selectedPermissions.length > 0) ? activeConsentStyles : inactiveConsentStyles}
         >
           {translateMessage('Consent')}
         </PrimaryButton>
@@ -245,7 +232,7 @@ const PanelList = ({ messages,
               }}
               ariaLabelForSelectionColumn={messages['Toggle selection'] || 'Toggle selection'}
               ariaLabelForSelectAllCheckbox={messages['Toggle selection for all items'] ||
-             'Toggle selection for all items'}
+                'Toggle selection for all items'}
               checkButtonAriaLabel={messages['Row checkbox'] || 'Row checkbox'}
               onRenderDetailsHeader={(props?: any, defaultRender?: any) => renderDetailsHeader(props, defaultRender)}
               onRenderCheckbox={(props?: IDetailsListCheckboxProps) => renderCustomCheckbox(props)}

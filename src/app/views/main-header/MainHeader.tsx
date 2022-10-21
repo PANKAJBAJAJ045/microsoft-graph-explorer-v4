@@ -16,11 +16,10 @@ import { Settings} from './settings/Settings';
 import { FeedbackButton } from './FeedbackButton';
 import { Authentication } from '../authentication';
 import { Help } from './Help';
-import { useSelector } from 'react-redux';
-import { IRootState } from '../../../types/root';
 import { mainHeaderStyles } from './MainHeader.styles';
 import TenantIcon from './tenantIcon';
 import { Mode } from '../../../types/enums';
+import { useAppSelector } from '../../../store';
 
 interface MainHeaderProps {
   minimised: boolean;
@@ -39,8 +38,8 @@ registerIcons({
   }
 });
 export const MainHeader: React.FunctionComponent <MainHeaderProps> = (props: MainHeaderProps) => {
-  const { profile, graphExplorerMode } = useSelector(
-    (state: IRootState) => state
+  const { profile, graphExplorerMode } = useAppSelector(
+    (state) => state
   );
   const minimised = props.minimised;
   const mobileScreen = props.mobileScreen;

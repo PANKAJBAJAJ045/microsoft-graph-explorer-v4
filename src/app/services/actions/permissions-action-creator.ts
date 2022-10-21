@@ -2,10 +2,10 @@ import { MessageBarType } from '@fluentui/react';
 
 import { geLocale } from '../../../appLocale';
 import { authenticationWrapper } from '../../../modules/authentication';
-import { IAction } from '../../../types/action';
+import { AppAction } from '../../../types/action';
 import { IUser } from '../../../types/profile';
 import { IRequestOptions } from '../../../types/request';
-import { IRootState } from '../../../types/root';
+import { ApplicationState } from '../../../types/root';
 import { sanitizeQueryUrl } from '../../utils/query-url-sanitization';
 import { parseSampleUrl } from '../../utils/sample-url-generation';
 import { translateMessage } from '../../utils/translate-messages';
@@ -24,36 +24,37 @@ import {
 } from './auth-action-creators';
 import { getProfileInfo } from './profile-action-creators';
 import { setQueryResponseStatus } from './query-status-action-creator';
+import { AppDispatch, AppThunk } from '../../../store';
 
-export function fetchFullScopesSuccess(response: object): IAction {
+export const fetchFullScopesSuccess = (response: object): AppAction => {
   return {
     type: FETCH_FULL_SCOPES_SUCCESS,
     response
   };
 }
 
-export function fetchUrlScopesSuccess(response: Object): IAction {
+export const fetchUrlScopesSuccess = (response: Object): AppAction => {
   return {
     type: FETCH_URL_SCOPES_SUCCESS,
     response
   }
 }
 
-export function fetchScopesPending(type: string): any {
-  return { type };
+export const fetchScopesPending = (type: string): AppAction => {
+  return { type, response: null };
 }
 
-export function fetchScopesError(response: object): IAction {
+export const fetchScopesError = (response: object): AppAction => {
   return {
     type: FETCH_SCOPES_ERROR,
     response
   };
 }
 
-export function fetchScopes(): Function {
-  return async (dispatch: Function, getState: Function) => {
+export const fetchScopes: AppThunk = () => {
+  return async (dispatch: AppDispatch, getState: Function) => {
     try {
-      const { devxApi, permissionsPanelOpen, profile, sampleQuery: query }: IRootState = getState();
+      const { devxApi, permissionsPanelOpen, profile, sampleQuery: query }: ApplicationState = getState();
       let permissionsUrl = `${devxApi.baseUrl}/permissions`;
 
       const scopeType = getPermissionsScopeType(profile);
@@ -106,17 +107,17 @@ export function fetchScopes(): Function {
   };
 }
 
-export function getPermissionsScopeType(profile: IUser | null | undefined) {
+export const getPermissionsScopeType = (profile: IUser | null | undefined): PERMS_SCOPE => {
   if (profile?.profileType === ACCOUNT_TYPE.MSA) {
     return PERMS_SCOPE.PERSONAL;
   }
   return PERMS_SCOPE.WORK;
 }
 
-export function consentToScopes(scopes: string[]): Function {
-  return async (dispatch: Function, getState: Function) => {
+export const consentToScopes = (scopes: string[]) => {
+  return async (dispatch: AppDispatch, getState: Function) => {
     try {
-      const { profile }: IRootState = getState();
+      const { profile }: ApplicationState = getState();
       const authResponse = await authenticationWrapper.consentToScopes(scopes);
       if (authResponse && authResponse.accessToken) {
         dispatch(getAuthTokenSuccess(true));
@@ -125,7 +126,7 @@ export function consentToScopes(scopes: string[]): Function {
           authResponse.account &&
           authResponse.account.localAccountId !== profile?.id
         ) {
-          dispatch(getProfileInfo());
+          getProfileInfo();
         }
       }
     } catch (error: any) {

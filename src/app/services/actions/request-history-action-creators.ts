@@ -1,4 +1,6 @@
 
+import { AppDispatch } from '../../../store';
+import { AppAction } from '../../../types/action';
 import { IHistoryItem } from '../../../types/history';
 import { bulkRemoveHistoryData, removeHistoryData } from '../../views/sidebar/history/history-utils';
 import {
@@ -23,10 +25,10 @@ export function bulkAddHistoryItems(historyItems: IHistoryItem[]): any {
   };
 }
 
-export function removeHistoryItem(historyItem: IHistoryItem): Function {
+export const removeHistoryItem = (historyItem: IHistoryItem) => {
 
   delete historyItem.category;
-  return async (dispatch: Function) => {
+  return async (dispatch: AppDispatch) => {
     return removeHistoryData(historyItem)
       .then(() => {
         dispatch({
@@ -37,14 +39,14 @@ export function removeHistoryItem(historyItem: IHistoryItem): Function {
   };
 }
 
-export function bulkRemoveHistoryItems(historyItems: IHistoryItem[]): Function {
+export const bulkRemoveHistoryItems = (historyItems: IHistoryItem[]) => {
 
   const listOfKeys: any = [];
   historyItems.forEach(historyItem => {
     listOfKeys.push(historyItem.createdAt);
   });
 
-  return async (dispatch: Function) => {
+  return async (dispatch: AppDispatch) => {
     return bulkRemoveHistoryData(listOfKeys)
       .then(() => {
         dispatch({
@@ -55,7 +57,7 @@ export function bulkRemoveHistoryItems(historyItems: IHistoryItem[]): Function {
   };
 }
 
-export function viewHistoryItem(historyItem: IHistoryItem): any {
+export const viewHistoryItem = (historyItem: IHistoryItem): AppAction => {
   return {
     type: VIEW_HISTORY_ITEM_SUCCESS,
     response: historyItem

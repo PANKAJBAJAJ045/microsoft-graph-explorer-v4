@@ -1,23 +1,13 @@
 import {
-  ActionButton,
-  Callout,
-  FontSizes,
-  getTheme,
-  IPersonaProps,
-  IPersonaSharedProps,
-  mergeStyleSets,
-  Persona,
-  PersonaSize,
-  Spinner,
-  SpinnerSize,
-  Stack,
-  styled
+  ActionButton, Callout, FontSizes, getTheme, IPersonaProps, IPersonaSharedProps,
+  mergeStyleSets, Persona, PersonaSize, Spinner, SpinnerSize, Stack, styled
 } from '@fluentui/react';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useId } from '@fluentui/react-hooks';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { IRootState } from '../../../../types/root';
+import { AppDispatch, useAppSelector } from '../../../../store';
+import { Mode } from '../../../../types/enums';
 import { signOut } from '../../../services/actions/auth-action-creators';
 import { togglePermissionsPanel } from '../../../services/actions/permissions-panel-action-creator';
 import { getProfileInfo } from '../../../services/actions/profile-action-creators';
@@ -26,7 +16,6 @@ import { classNames } from '../../classnames';
 import { Permission } from '../../query-runner/request/permissions';
 import { authenticationStyles } from '../Authentication.styles';
 import { profileStyles } from './Profile.styles';
-import { Mode } from '../../../../types/enums';
 
 const getInitials = (name: string) => {
   let initials = '';
@@ -45,13 +34,13 @@ const getInitials = (name: string) => {
 };
 
 const Profile = (props: any) => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const {
     profile,
     authToken,
     permissionsPanelOpen,
     graphExplorerMode
-  } = useSelector((state: IRootState) => state);
+  } = useAppSelector((state) => state);
   const authenticated = authToken.token;
   const [isCalloutVisible, setIsCalloutVisible] = useState(false);
   const toggleIsCalloutVisible = () => { setIsCalloutVisible(!isCalloutVisible) };
@@ -64,7 +53,7 @@ const Profile = (props: any) => {
 
   useEffect(() => {
     if (authenticated) {
-      dispatch(getProfileInfo());
+      getProfileInfo();
     }
   }, [authenticated]);
 
@@ -74,7 +63,7 @@ const Profile = (props: any) => {
   }
 
   const handleSignOut = () => {
-    dispatch(signOut());
+    signOut();
   }
 
   const handleSignInOther = async () => {
